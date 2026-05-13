@@ -6,10 +6,10 @@
 <title>Este & Edo — Carpool 🚗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
 :root {
   --sand: #f5f0e8;
   --sand-dark: #ece5d6;
@@ -30,9 +30,9 @@
   --r: 10px;
   --r-lg: 18px;
 }
-
+ 
 html { scroll-behavior: smooth; }
-
+ 
 body {
   font-family: 'Jost', sans-serif;
   background: var(--linen);
@@ -41,7 +41,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
 }
-
+ 
 /* ─── HERO ─── */
 .hero {
   background: var(--olive-dark);
@@ -53,9 +53,10 @@ body {
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.03) 0%, transparent 50%);
+  background-image: url('https://anticoconventoicappuccini.com/wp-content/uploads/2025/03/Antico-Convento-i-Cappuccini_hp1.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.28;
 }
 .hero-ornament {
   font-family: 'Cormorant Garamond', serif;
@@ -114,7 +115,7 @@ body {
   margin: 0 auto;
   line-height: 1.5;
 }
-
+ 
 /* ─── TABS ─── */
 .tabs {
   display: flex;
@@ -144,10 +145,10 @@ body {
   border-bottom-color: var(--terra-light);
 }
 .tab-btn:hover:not(.active) { color: rgba(245,240,232,0.75); }
-
+ 
 /* ─── LAYOUT ─── */
 .main { max-width: 640px; margin: 0 auto; padding: 1.75rem 1.1rem 5rem; }
-
+ 
 /* ─── CARDS ─── */
 .card {
   background: var(--white);
@@ -169,7 +170,7 @@ body {
   margin-bottom: 1.5rem;
   line-height: 1.65;
 }
-
+ 
 /* ─── FORMS ─── */
 .form-row { margin-bottom: 1rem; }
 .form-row label {
@@ -208,7 +209,7 @@ select {
 }
 textarea { resize: vertical; min-height: 72px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
-
+ 
 /* ─── DIRECTION TOGGLE ─── */
 .dir-toggle {
   display: grid;
@@ -239,7 +240,7 @@ textarea { resize: vertical; min-height: 72px; }
   color: var(--sand);
   font-weight: 500;
 }
-
+ 
 /* ─── BUTTONS ─── */
 .btn {
   width: 100%;
@@ -266,7 +267,7 @@ textarea { resize: vertical; min-height: 72px; }
   color: var(--ink-mid);
 }
 .btn-outline:hover { background: var(--olive-pale); }
-
+ 
 /* ─── LOADING ─── */
 .spinner {
   display: inline-block;
@@ -279,7 +280,7 @@ textarea { resize: vertical; min-height: 72px; }
   margin-right: 6px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
 /* ─── BANNERS ─── */
 .banner {
   padding: 0.85rem 1.1rem;
@@ -292,7 +293,7 @@ textarea { resize: vertical; min-height: 72px; }
 .banner.show { display: block; }
 .banner-success { background: var(--olive-pale); border: 1px solid rgba(107,122,69,0.3); color: var(--olive-dark); }
 .banner-error { background: var(--terra-pale); border: 1px solid var(--border-warm); color: var(--terra); }
-
+ 
 /* ─── MATCH CARDS ─── */
 .results-header {
   display: flex;
@@ -314,7 +315,7 @@ textarea { resize: vertical; min-height: 72px; }
   background: var(--sand-dark);
   color: var(--ink-muted);
 }
-
+ 
 .match-card {
   background: var(--white);
   border: 1px solid var(--sand-dark);
@@ -348,7 +349,7 @@ textarea { resize: vertical; min-height: 72px; }
 }
 .badge-go { background: var(--olive-pale); color: var(--olive-dark); }
 .badge-return { background: var(--terra-pale); color: var(--terra); }
-
+ 
 .match-detail {
   font-size: 0.875rem;
   color: var(--ink-muted);
@@ -414,7 +415,7 @@ textarea { resize: vertical; min-height: 72px; }
   text-decoration: none;
   letter-spacing: 0.03em;
 }
-
+ 
 /* ─── EMPTY STATE ─── */
 .empty {
   text-align: center;
@@ -428,13 +429,13 @@ textarea { resize: vertical; min-height: 72px; }
   margin-bottom: 0.5rem;
 }
 .empty-sub { font-size: 0.875rem; line-height: 1.65; }
-
+ 
 /* ─── DIVIDER ─── */
 .divider { height: 1px; background: var(--sand-dark); margin: 1.25rem 0; }
-
+ 
 /* ─── HIDDEN ─── */
 .hidden { display: none !important; }
-
+ 
 /* ─── CONNECTION STATUS ─── */
 .db-status {
   font-size: 0.72rem;
@@ -446,7 +447,7 @@ textarea { resize: vertical; min-height: 72px; }
 }
 .db-status.ok { color: var(--olive); }
 .db-status.err { color: var(--terra); }
-
+ 
 /* ─── SECTION GROUP ─── */
 .group-label {
   font-size: 0.72rem;
@@ -465,7 +466,7 @@ textarea { resize: vertical; min-height: 72px; }
   height: 1px;
   background: var(--sand-dark);
 }
-
+ 
 /* ─── MOBILE ─── */
 @media (max-width: 420px) {
   .hero { padding: 2.5rem 1.25rem 2rem; }
@@ -477,37 +478,37 @@ textarea { resize: vertical; min-height: 72px; }
 </style>
 </head>
 <body>
-
+ 
 <!-- HERO -->
 <header class="hero">
   <div class="hero-bg"></div>
   <p class="hero-ornament">Carpool</p>
   <h1 class="hero-names">Este <em>&</em> Edo</h1>
-  <p class="hero-date">27 Giugno 2026</p>
+  <p class="hero-date">27 June 2026</p>
   <p class="hero-location">Antico Convento i Cappuccini · Montalcino</p>
   <p class="hero-tagline">Let's travel together — find or offer a ride</p>
 </header>
-
+ 
 <!-- TABS -->
 <nav class="tabs">
   <button class="tab-btn active" onclick="showTab('offer',this)">🚗 I can drive</button>
   <button class="tab-btn" onclick="showTab('find',this)">🔍 I need a ride</button>
   <button class="tab-btn" onclick="showTab('all',this)">📋 All rides</button>
 </nav>
-
+ 
 <div id="db-status" class="db-status">Connecting…</div>
-
+ 
 <main class="main">
-
+ 
   <!-- ══ OFFER TAB ══ -->
   <div id="tab-offer">
     <div class="card">
       <h2 class="card-title">Offer a ride</h2>
       <p class="card-desc">Add your details and people looking for a ride can contact you directly. Your number is only visible to those whose search matches your route.</p>
-
+ 
       <div id="offer-success" class="banner banner-success">✓ Great! Your ride offer has been saved. Compatible travellers will be able to see and contact you.</div>
       <div id="offer-error" class="banner banner-error"></div>
-
+ 
       <div class="form-row">
         <label>Your name</label>
         <input type="text" id="o-name" placeholder="e.g. Giulia Rossi" autocomplete="name" />
@@ -516,14 +517,14 @@ textarea { resize: vertical; min-height: 72px; }
         <label>Phone / WhatsApp</label>
         <input type="tel" id="o-phone" placeholder="+39 333 …" autocomplete="tel" />
       </div>
-
+ 
       <div class="divider"></div>
       <p class="section-label" style="margin-bottom:0.6rem">Direction</p>
       <div class="dir-toggle" id="o-dir">
         <button class="dir-btn active" data-val="go" onclick="setDir('o',this)">→ Going<br><small>Saturday to wedding</small></button>
         <button class="dir-btn" data-val="return" onclick="setDir('o',this)">← Return<br><small>Sunday back home</small></button>
       </div>
-
+ 
       <div class="form-row">
         <label>Departure city / location</label>
         <select id="o-city" onchange="toggleOther('o',this)">
@@ -548,7 +549,7 @@ textarea { resize: vertical; min-height: 72px; }
         <label>Specify location</label>
         <input type="text" id="o-other" placeholder="e.g. Genova, exit A26…" />
       </div>
-
+ 
       <div class="row2">
         <div class="form-row">
           <label>Departure time</label>
@@ -559,30 +560,30 @@ textarea { resize: vertical; min-height: 72px; }
           <input type="number" id="o-seats" min="1" max="7" value="2" />
         </div>
       </div>
-
+ 
       <div class="form-row">
         <label>Notes (optional)</label>
         <textarea id="o-note" placeholder="e.g. can pick up along A1, have roof box…"></textarea>
       </div>
-
+ 
       <button class="btn btn-primary" id="offer-btn" onclick="submitOffer()">Add my ride offer</button>
     </div>
   </div>
-
+ 
   <!-- ══ FIND TAB ══ -->
   <div id="tab-find" class="hidden">
     <div class="card">
       <h2 class="card-title">Find a ride</h2>
       <p class="card-desc">Search for drivers leaving from your area in your preferred time window. You'll only see contacts for compatible matches.</p>
-
+ 
       <div id="find-error" class="banner banner-error"></div>
-
+ 
       <p class="section-label" style="margin-bottom:0.6rem">Direction</p>
       <div class="dir-toggle" id="f-dir">
         <button class="dir-btn active" data-val="go" onclick="setDir('f',this)">→ Going<br><small>Saturday to wedding</small></button>
         <button class="dir-btn" data-val="return" onclick="setDir('f',this)">← Return<br><small>Sunday back home</small></button>
       </div>
-
+ 
       <div class="form-row">
         <label>Where are you coming from?</label>
         <select id="f-city" onchange="toggleOther('f',this)">
@@ -607,7 +608,7 @@ textarea { resize: vertical; min-height: 72px; }
         <label>Specify your starting point</label>
         <input type="text" id="f-other" placeholder="e.g. Genova" />
       </div>
-
+ 
       <div class="form-row">
         <label>Time window (4 hours)</label>
         <select id="f-window">
@@ -619,10 +620,10 @@ textarea { resize: vertical; min-height: 72px; }
           <option value="6-18">Any time</option>
         </select>
       </div>
-
+ 
       <button class="btn btn-search" id="search-btn" onclick="searchRides()">Search rides</button>
     </div>
-
+ 
     <div id="results-area" class="hidden">
       <div class="results-header">
         <p class="section-label">Matching rides</p>
@@ -631,7 +632,7 @@ textarea { resize: vertical; min-height: 72px; }
       <div id="results-list"></div>
     </div>
   </div>
-
+ 
   <!-- ══ ALL TAB ══ -->
   <div id="tab-all" class="hidden">
     <div class="results-header" style="margin-bottom:0.5rem">
@@ -640,45 +641,45 @@ textarea { resize: vertical; min-height: 72px; }
     </div>
     <div id="all-list"></div>
   </div>
-
+ 
 </main>
-
+ 
 <script>
 // ─── CONFIG ────────────────────────────────────────────────
 // Replace these with your actual Supabase project values after setup
 const SUPABASE_URL = 'https://zdgwscdqxdzljmgkxyrb.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_j1vMgw8H67_7vVJO-Oa9Uw_iP8ZQgpA';
-
+ 
 // ─── STATE ─────────────────────────────────────────────────
 let db = null;
 let offerDir = 'go';
 let findDir = 'go';
 let activeTab = 'offer';
-
+ 
 // ─── INIT ──────────────────────────────────────────────────
 function initDB() {
   try {
-    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
-      setStatus('⚠ Demo mode — data saved on this device only', 'err');
-      return false;
+    if (typeof supabase === 'undefined') {
+      setStatus('⚠ Offline mode — data saved on this device only', 'err');
+      setTimeout(() => document.getElementById('db-status').style.display = 'none', 3000);
+      return;
     }
     const { createClient } = supabase;
     db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     setStatus('✓ Connected', 'ok');
     setTimeout(() => document.getElementById('db-status').style.display = 'none', 2000);
-    return true;
   } catch(e) {
     setStatus('⚠ Offline mode', 'err');
-    return false;
+    setTimeout(() => document.getElementById('db-status').style.display = 'none', 3000);
   }
 }
-
+ 
 function setStatus(msg, cls) {
   const el = document.getElementById('db-status');
   el.textContent = msg;
   el.className = 'db-status ' + cls;
 }
-
+ 
 // Local fallback
 function localLoad() {
   try { return JSON.parse(localStorage.getItem('esteedo_carpool') || '[]'); }
@@ -687,7 +688,7 @@ function localLoad() {
 function localSave(offers) {
   localStorage.setItem('esteedo_carpool', JSON.stringify(offers));
 }
-
+ 
 // ─── TABS ──────────────────────────────────────────────────
 function showTab(name, btn) {
   ['offer','find','all'].forEach(t => {
@@ -699,7 +700,7 @@ function showTab(name, btn) {
   activeTab = name;
   if(name === 'all') loadAll();
 }
-
+ 
 // ─── DIRECTION ─────────────────────────────────────────────
 function setDir(prefix, btn) {
   btn.parentElement.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
@@ -707,13 +708,13 @@ function setDir(prefix, btn) {
   if(prefix === 'o') offerDir = btn.dataset.val;
   else findDir = btn.dataset.val;
 }
-
+ 
 // ─── OTHER FIELD ───────────────────────────────────────────
 function toggleOther(prefix, sel) {
   const row = document.getElementById(prefix+'-other-row');
   row.classList.toggle('hidden', sel.value !== 'other');
 }
-
+ 
 // ─── CITY MATCHING ─────────────────────────────────────────
 const CITY_GROUPS = {
   'Turin': ['Turin'],
@@ -724,14 +725,14 @@ const CITY_GROUPS = {
   'PSA': ['Florence','FLR','PSA'],
   'BLQ': ['Bologna','BLQ'],
 };
-
+ 
 function citiesMatch(a, b) {
   if(!a || !b) return true; // empty = wildcard
   const ga = CITY_GROUPS[a] || [a];
   const gb = CITY_GROUPS[b] || [b];
   return ga.some(x => gb.includes(x)) || a.toLowerCase() === b.toLowerCase();
 }
-
+ 
 // ─── TIME ──────────────────────────────────────────────────
 function parseHour(s) {
   if(!s) return NaN;
@@ -739,7 +740,7 @@ function parseHour(s) {
   if(!m) return NaN;
   return parseInt(m[1]) + (parseInt(m[2]||0)/60);
 }
-
+ 
 // ─── SUBMIT OFFER ──────────────────────────────────────────
 async function submitOffer() {
   const name  = document.getElementById('o-name').value.trim();
@@ -749,7 +750,7 @@ async function submitOffer() {
   const time  = document.getElementById('o-time').value.trim();
   const seats = parseInt(document.getElementById('o-seats').value);
   const note  = document.getElementById('o-note').value.trim();
-
+ 
   if(!name || !phone || !city || !time) {
     showBanner('offer-error', '⚠ Please fill in all required fields.');
     return;
@@ -758,13 +759,13 @@ async function submitOffer() {
     showBanner('offer-error', '⚠ Invalid time. Use HH:MM format (e.g. 09:30).');
     return;
   }
-
+ 
   const offer = { name, phone, city, time, seats, note, dir: offerDir, created_at: new Date().toISOString() };
-
+ 
   const btn = document.getElementById('offer-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Saving…';
-
+ 
   let ok = false;
   if(db) {
     const { error } = await db.from('offers').insert([offer]);
@@ -776,10 +777,10 @@ async function submitOffer() {
     localSave(all);
     ok = true;
   }
-
+ 
   btn.disabled = false;
   btn.textContent = 'Add my ride offer';
-
+ 
   if(ok) {
     hideBanner('offer-error');
     showBanner('offer-success', '✓ All set! You're on the list. Compatible travellers will be able to contact you.');
@@ -789,18 +790,18 @@ async function submitOffer() {
     setTimeout(() => hideBanner('offer-success'), 5000);
   }
 }
-
+ 
 // ─── SEARCH ────────────────────────────────────────────────
 async function searchRides() {
   let fcity = document.getElementById('f-city').value;
   if(fcity === 'other') fcity = document.getElementById('f-other').value.trim();
   const win = document.getElementById('f-window').value;
   const [wStart, wEnd] = win.split('-').map(Number);
-
+ 
   const btn = document.getElementById('search-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Searching…';
-
+ 
   let all = [];
   if(db) {
     const { data, error } = await db.from('offers').select('*').eq('dir', findDir);
@@ -809,22 +810,22 @@ async function searchRides() {
   } else {
     all = localLoad().filter(o => o.dir === findDir);
   }
-
+ 
   btn.disabled = false;
   btn.textContent = 'Search rides';
-
+ 
   const matched = all.filter(o => {
     const cityOk = citiesMatch(fcity, o.city);
     const h = parseHour(o.time);
     const timeOk = wStart === 6 && wEnd === 18 ? true : (h >= wStart && h <= wEnd);
     return cityOk && timeOk;
   });
-
+ 
   hideBanner('find-error');
   document.getElementById('results-area').classList.remove('hidden');
   document.getElementById('results-count').textContent = matched.length + (matched.length === 1 ? ' found' : ' found');
   const list = document.getElementById('results-list');
-
+ 
   if(!matched.length) {
     list.innerHTML = `<div class="empty">
       <p class="empty-title">No rides found</p>
@@ -832,15 +833,15 @@ async function searchRides() {
     </div>`;
     return;
   }
-
+ 
   list.innerHTML = matched.map(o => renderCard(o, true)).join('');
 }
-
+ 
 // ─── LOAD ALL ──────────────────────────────────────────────
 async function loadAll() {
   const list = document.getElementById('all-list');
   list.innerHTML = '<div class="empty"><p class="empty-sub">Loading…</p></div>';
-
+ 
   let all = [];
   if(db) {
     const { data, error } = await db.from('offers').select('*').order('created_at', { ascending: true });
@@ -849,14 +850,14 @@ async function loadAll() {
   } else {
     all = localLoad();
   }
-
+ 
   document.getElementById('all-count').textContent = all.length + (all.length === 1 ? ' ride' : ' rides');
-
+ 
   if(!all.length) {
     list.innerHTML = '<div class="empty"><p class="empty-title">No rides yet</p><p class="empty-sub">Be the first to add yours!</p></div>';
     return;
   }
-
+ 
   const go = all.filter(o => o.dir === 'go');
   const ret = all.filter(o => o.dir === 'return');
   let html = '';
@@ -870,13 +871,13 @@ async function loadAll() {
   }
   list.innerHTML = html;
 }
-
+ 
 // ─── RENDER CARD ───────────────────────────────────────────
 function renderCard(o, showContact) {
   const dirBadge = o.dir === 'go'
     ? '<span class="badge badge-go">→ Going</span>'
     : '<span class="badge badge-return">← Return</span>';
-
+ 
   const contactSection = showContact
     ? `<div class="contact-row">
         <button class="reveal-btn" onclick="revealContact(this,'${esc(o.phone)}')">Show contact</button>
@@ -885,7 +886,7 @@ function renderCard(o, showContact) {
     : `<div class="contact-row">
         <span style="font-size:0.8rem;color:var(--ink-muted)">Search under "Find a ride" to see the contact</span>
       </div>`;
-
+ 
   return `<div class="match-card">
     <div class="match-top">
       <span class="match-name">${esc(o.name)}</span>
@@ -895,17 +896,17 @@ function renderCard(o, showContact) {
       <strong>${esc(o.city)}</strong> · at <strong>${esc(o.time)}</strong>
     </div>
     ${o.note ? `<p class="match-note">"${esc(o.note)}"</p>` : ''}
-    <span class="seats-tag">🪑 ${o.seats} posto${o.seats>1?'i':''} disponibil${o.seats>1?'i':'e'}</span>
+    <span class="seats-tag">🪑 ${o.seats} seat${o.seats>1?'s':''} available</span>
     ${contactSection}
   </div>`;
 }
-
+ 
 function revealContact(btn, phone) {
   const display = btn.nextElementSibling;
   btn.style.display = 'none';
   display.style.display = '';
   display.textContent = '📞 ' + phone;
-
+ 
   // WhatsApp link
   const clean = phone.replace(/\s+/g,'').replace(/^00/,'+');
   if(clean.startsWith('+')) {
@@ -917,7 +918,7 @@ function revealContact(btn, phone) {
     display.parentElement.appendChild(wa);
   }
 }
-
+ 
 // ─── UTILS ─────────────────────────────────────────────────
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -930,9 +931,10 @@ function hideBanner(id) {
   const el = document.getElementById(id);
   if(el) el.classList.remove('show');
 }
-
+ 
 // ─── START ─────────────────────────────────────────────────
-initDB();
+window.addEventListener('load', initDB);
 </script>
 </body>
 </html>
+ 
