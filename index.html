@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Este & Edo — Carpool 🚗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sand: #f5f0e8;
+  --sand-dark: #ece5d6;
+  --linen: #faf7f2;
+  --olive: #6b7a45;
+  --olive-dark: #4e5b2e;
+  --olive-light: #8e9e5a;
+  --olive-pale: #eef1e3;
+  --terra: #b85c38;
+  --terra-light: #cc7050;
+  --terra-pale: #f8ede7;
+  --ink: #1e1a14;
+  --ink-mid: #4a4035;
+  --ink-muted: #7a6e5e;
+  --border: rgba(107,122,69,0.2);
+  --border-warm: rgba(184,92,56,0.2);
+  --white: #ffffff;
+  --r: 10px;
+  --r-lg: 18px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--linen);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ─── HERO ─── */
+.hero {
+  background: var(--olive-dark);
+  color: var(--sand);
+  text-align: center;
+  padding: 3.5rem 1.5rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.03) 0%, transparent 50%);
+}
+.hero-ornament {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.hero-ornament::before, .hero-ornament::after {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+.hero-names {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+.hero-names em { font-style: italic; }
+.hero-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  opacity: 0.75;
+  margin-bottom: 0.25rem;
+  position: relative;
+}
+.hero-location {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  position: relative;
+  margin-bottom: 2rem;
+}
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  opacity: 0.8;
+  position: relative;
+  max-width: 380px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  background: var(--olive-dark);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.tab-btn {
+  flex: 1;
+  padding: 0.9rem 0.5rem;
+  border: none;
+  background: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.5);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  color: var(--sand);
+  border-bottom-color: var(--terra-light);
+}
+.tab-btn:hover:not(.active) { color: rgba(245,240,232,0.75); }
+
+/* ─── LAYOUT ─── */
+.main { max-width: 640px; margin: 0 auto; padding: 1.75rem 1.1rem 5rem; }
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--sand-dark);
+  border-radius: var(--r-lg);
+  padding: 1.75rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+.card-desc {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.65;
+}
+
+/* ─── FORMS ─── */
+.form-row { margin-bottom: 1rem; }
+.form-row label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.35rem;
+}
+input[type=text], input[type=email], input[type=number], input[type=tel],
+select, textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--sand-dark);
+  border-radius: var(--r);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.95rem;
+  background: var(--linen);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--olive-light);
+  background: var(--white);
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a6e5e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.25rem;
+}
+textarea { resize: vertical; min-height: 72px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+
+/* ─── DIRECTION TOGGLE ─── */
+.dir-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--sand-dark);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+  background: var(--linen);
+}
+.dir-btn {
+  padding: 0.7rem 0.5rem;
+  border: none;
+  background: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  line-height: 1.3;
+  text-align: center;
+}
+.dir-btn:first-child { border-right: 1px solid var(--sand-dark); }
+.dir-btn.active {
+  background: var(--olive-dark);
+  color: var(--sand);
+  font-weight: 500;
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: var(--r);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 0.5rem;
+}
+.btn:active { transform: scale(0.985); }
+.btn-primary { background: var(--terra); color: var(--white); }
+.btn-primary:hover { background: var(--terra-light); }
+.btn-search { background: var(--olive-dark); color: var(--sand); }
+.btn-search:hover { background: var(--olive); }
+.btn-outline {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--ink-mid);
+}
+.btn-outline:hover { background: var(--olive-pale); }
+
+/* ─── LOADING ─── */
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── BANNERS ─── */
+.banner {
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  display: none;
+  line-height: 1.5;
+}
+.banner.show { display: block; }
+.banner-success { background: var(--olive-pale); border: 1px solid rgba(107,122,69,0.3); color: var(--olive-dark); }
+.banner-error { background: var(--terra-pale); border: 1px solid var(--border-warm); color: var(--terra); }
+
+/* ─── MATCH CARDS ─── */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.count-pill {
+  font-size: 0.75rem;
+  padding: 3px 12px;
+  border-radius: 99px;
+  background: var(--sand-dark);
+  color: var(--ink-muted);
+}
+
+.match-card {
+  background: var(--white);
+  border: 1px solid var(--sand-dark);
+  border-radius: var(--r);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 0.7rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.match-card:hover { border-color: var(--olive-light); box-shadow: 0 2px 12px rgba(107,122,69,0.1); }
+.match-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.match-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.badge {
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-go { background: var(--olive-pale); color: var(--olive-dark); }
+.badge-return { background: var(--terra-pale); color: var(--terra); }
+
+.match-detail {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  line-height: 1.65;
+}
+.match-detail strong { color: var(--ink-mid); font-weight: 500; }
+.match-note {
+  font-style: italic;
+  font-size: 0.84rem;
+  color: var(--ink-muted);
+  margin-top: 0.3rem;
+}
+.seats-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--olive-pale);
+  color: var(--olive-dark);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 99px;
+  margin-top: 0.5rem;
+}
+.contact-row {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--sand-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.reveal-btn {
+  font-size: 0.82rem;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  background: none;
+  color: var(--olive-dark);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.reveal-btn:hover { background: var(--olive-pale); }
+.phone-display {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--terra);
+}
+.whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: 99px;
+  background: #25d366;
+  color: white;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+}
+
+/* ─── EMPTY STATE ─── */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--ink-muted);
+}
+.empty-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.empty-sub { font-size: 0.875rem; line-height: 1.65; }
+
+/* ─── DIVIDER ─── */
+.divider { height: 1px; background: var(--sand-dark); margin: 1.25rem 0; }
+
+/* ─── HIDDEN ─── */
+.hidden { display: none !important; }
+
+/* ─── CONNECTION STATUS ─── */
+.db-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.4rem;
+  color: var(--ink-muted);
+}
+.db-status.ok { color: var(--olive); }
+.db-status.err { color: var(--terra); }
+
+/* ─── SECTION GROUP ─── */
+.group-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 1.5rem 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.group-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sand-dark);
+}
+
+/* ─── MOBILE ─── */
+@media (max-width: 420px) {
+  .hero { padding: 2.5rem 1.25rem 2rem; }
+  .hero-names { font-size: 2.6rem; }
+  .row2 { grid-template-columns: 1fr; gap: 0.75rem; }
+  .card { padding: 1.35rem 1.1rem; }
+  .tab-btn { font-size: 0.7rem; padding: 0.85rem 0.25rem; letter-spacing: 0.05em; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <p class="hero-ornament">Carpool</p>
+  <h1 class="hero-names">Este <em>&</em> Edo</h1>
+  <p class="hero-date">27 Giugno 2026</p>
+  <p class="hero-location">Antico Convento i Cappuccini · Montalcino</p>
+  <p class="hero-tagline">Let's travel together — find or offer a ride</p>
+</header>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab-btn active" onclick="showTab('offer',this)">🚗 I can drive</button>
+  <button class="tab-btn" onclick="showTab('find',this)">🔍 I need a ride</button>
+  <button class="tab-btn" onclick="showTab('all',this)">📋 All rides</button>
+</nav>
+
+<div id="db-status" class="db-status">Connecting…</div>
+
+<main class="main">
+
+  <!-- ══ OFFER TAB ══ -->
+  <div id="tab-offer">
+    <div class="card">
+      <h2 class="card-title">Offer a ride</h2>
+      <p class="card-desc">Add your details and people looking for a ride can contact you directly. Your number is only visible to those whose search matches your route.</p>
+
+      <div id="offer-success" class="banner banner-success">✓ Great! Your ride offer has been saved. Compatible travellers will be able to see and contact you.</div>
+      <div id="offer-error" class="banner banner-error"></div>
+
+      <div class="form-row">
+        <label>Your name</label>
+        <input type="text" id="o-name" placeholder="e.g. Giulia Rossi" autocomplete="name" />
+      </div>
+      <div class="form-row">
+        <label>Phone / WhatsApp</label>
+        <input type="tel" id="o-phone" placeholder="+39 333 …" autocomplete="tel" />
+      </div>
+
+      <div class="divider"></div>
+      <p class="section-label" style="margin-bottom:0.6rem">Direction</p>
+      <div class="dir-toggle" id="o-dir">
+        <button class="dir-btn active" data-val="go" onclick="setDir('o',this)">→ Going<br><small>Saturday to wedding</small></button>
+        <button class="dir-btn" data-val="return" onclick="setDir('o',this)">← Return<br><small>Sunday back home</small></button>
+      </div>
+
+      <div class="form-row">
+        <label>Departure city / location</label>
+        <select id="o-city" onchange="toggleOther('o',this)">
+          <option value="">— select —</option>
+          <optgroup label="Main cities">
+            <option>Turin</option>
+            <option>Milan</option>
+            <option>Bologna</option>
+            <option>Florence</option>
+          </optgroup>
+          <optgroup label="Airports">
+            <option value="FLR">Florence Airport (FLR)</option>
+            <option value="PSA">Pisa Airport (PSA)</option>
+            <option value="BLQ">Bologna Airport (BLQ)</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="other">Other (specify below)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-row hidden" id="o-other-row">
+        <label>Specify location</label>
+        <input type="text" id="o-other" placeholder="e.g. Genova, exit A26…" />
+      </div>
+
+      <div class="row2">
+        <div class="form-row">
+          <label>Departure time</label>
+          <input type="text" id="o-time" placeholder="e.g. 09:00" />
+        </div>
+        <div class="form-row">
+          <label>Available seats</label>
+          <input type="number" id="o-seats" min="1" max="7" value="2" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Notes (optional)</label>
+        <textarea id="o-note" placeholder="e.g. can pick up along A1, have roof box…"></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="offer-btn" onclick="submitOffer()">Add my ride offer</button>
+    </div>
+  </div>
+
+  <!-- ══ FIND TAB ══ -->
+  <div id="tab-find" class="hidden">
+    <div class="card">
+      <h2 class="card-title">Find a ride</h2>
+      <p class="card-desc">Search for drivers leaving from your area in your preferred time window. You'll only see contacts for compatible matches.</p>
+
+      <div id="find-error" class="banner banner-error"></div>
+
+      <p class="section-label" style="margin-bottom:0.6rem">Direction</p>
+      <div class="dir-toggle" id="f-dir">
+        <button class="dir-btn active" data-val="go" onclick="setDir('f',this)">→ Going<br><small>Saturday to wedding</small></button>
+        <button class="dir-btn" data-val="return" onclick="setDir('f',this)">← Return<br><small>Sunday back home</small></button>
+      </div>
+
+      <div class="form-row">
+        <label>Where are you coming from?</label>
+        <select id="f-city" onchange="toggleOther('f',this)">
+          <option value="">— select —</option>
+          <optgroup label="Main cities">
+            <option>Turin</option>
+            <option>Milan</option>
+            <option>Bologna</option>
+            <option>Florence</option>
+          </optgroup>
+          <optgroup label="Airports">
+            <option value="FLR">Florence Airport (FLR)</option>
+            <option value="PSA">Pisa Airport (PSA)</option>
+            <option value="BLQ">Bologna Airport (BLQ)</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="other">Other (specify below)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-row hidden" id="f-other-row">
+        <label>Specify your starting point</label>
+        <input type="text" id="f-other" placeholder="e.g. Genova" />
+      </div>
+
+      <div class="form-row">
+        <label>Time window (4 hours)</label>
+        <select id="f-window">
+          <option value="6-10">06:00 – 10:00</option>
+          <option value="8-12" selected>08:00 – 12:00</option>
+          <option value="10-14">10:00 – 14:00</option>
+          <option value="12-16">12:00 – 16:00</option>
+          <option value="14-18">14:00 – 18:00</option>
+          <option value="6-18">Any time</option>
+        </select>
+      </div>
+
+      <button class="btn btn-search" id="search-btn" onclick="searchRides()">Search rides</button>
+    </div>
+
+    <div id="results-area" class="hidden">
+      <div class="results-header">
+        <p class="section-label">Matching rides</p>
+        <span class="count-pill" id="results-count">0 trovati</span>
+      </div>
+      <div id="results-list"></div>
+    </div>
+  </div>
+
+  <!-- ══ ALL TAB ══ -->
+  <div id="tab-all" class="hidden">
+    <div class="results-header" style="margin-bottom:0.5rem">
+      <p class="section-label">All ride offers</p>
+      <span class="count-pill" id="all-count">—</span>
+    </div>
+    <div id="all-list"></div>
+  </div>
+
+</main>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────
+// Replace these with your actual Supabase project values after setup
+const SUPABASE_URL = 'https://zdgwscdqxdzljmgkxyrb.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_j1vMgw8H67_7vVJO-Oa9Uw_iP8ZQgpA';
+
+// ─── STATE ─────────────────────────────────────────────────
+let db = null;
+let offerDir = 'go';
+let findDir = 'go';
+let activeTab = 'offer';
+
+// ─── INIT ──────────────────────────────────────────────────
+function initDB() {
+  try {
+    if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+      setStatus('⚠ Demo mode — data saved on this device only', 'err');
+      return false;
+    }
+    const { createClient } = supabase;
+    db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    setStatus('✓ Connected', 'ok');
+    setTimeout(() => document.getElementById('db-status').style.display = 'none', 2000);
+    return true;
+  } catch(e) {
+    setStatus('⚠ Offline mode', 'err');
+    return false;
+  }
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('db-status');
+  el.textContent = msg;
+  el.className = 'db-status ' + cls;
+}
+
+// Local fallback
+function localLoad() {
+  try { return JSON.parse(localStorage.getItem('esteedo_carpool') || '[]'); }
+  catch(e) { return []; }
+}
+function localSave(offers) {
+  localStorage.setItem('esteedo_carpool', JSON.stringify(offers));
+}
+
+// ─── TABS ──────────────────────────────────────────────────
+function showTab(name, btn) {
+  ['offer','find','all'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('hidden', t !== name);
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['offer','find','all'][i] === name);
+  });
+  activeTab = name;
+  if(name === 'all') loadAll();
+}
+
+// ─── DIRECTION ─────────────────────────────────────────────
+function setDir(prefix, btn) {
+  btn.parentElement.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if(prefix === 'o') offerDir = btn.dataset.val;
+  else findDir = btn.dataset.val;
+}
+
+// ─── OTHER FIELD ───────────────────────────────────────────
+function toggleOther(prefix, sel) {
+  const row = document.getElementById(prefix+'-other-row');
+  row.classList.toggle('hidden', sel.value !== 'other');
+}
+
+// ─── CITY MATCHING ─────────────────────────────────────────
+const CITY_GROUPS = {
+  'Turin': ['Turin'],
+  'Milan': ['Milan'],
+  'Bologna': ['Bologna','BLQ'],
+  'Florence': ['Florence','FLR','PSA'],
+  'FLR': ['Florence','FLR','PSA'],
+  'PSA': ['Florence','FLR','PSA'],
+  'BLQ': ['Bologna','BLQ'],
+};
+
+function citiesMatch(a, b) {
+  if(!a || !b) return true; // empty = wildcard
+  const ga = CITY_GROUPS[a] || [a];
+  const gb = CITY_GROUPS[b] || [b];
+  return ga.some(x => gb.includes(x)) || a.toLowerCase() === b.toLowerCase();
+}
+
+// ─── TIME ──────────────────────────────────────────────────
+function parseHour(s) {
+  if(!s) return NaN;
+  const m = String(s).match(/^(\d{1,2})[:\.]?(\d{0,2})/);
+  if(!m) return NaN;
+  return parseInt(m[1]) + (parseInt(m[2]||0)/60);
+}
+
+// ─── SUBMIT OFFER ──────────────────────────────────────────
+async function submitOffer() {
+  const name  = document.getElementById('o-name').value.trim();
+  const phone = document.getElementById('o-phone').value.trim();
+  let   city  = document.getElementById('o-city').value;
+  if(city === 'other') city = document.getElementById('o-other').value.trim();
+  const time  = document.getElementById('o-time').value.trim();
+  const seats = parseInt(document.getElementById('o-seats').value);
+  const note  = document.getElementById('o-note').value.trim();
+
+  if(!name || !phone || !city || !time) {
+    showBanner('offer-error', '⚠ Please fill in all required fields.');
+    return;
+  }
+  if(isNaN(parseHour(time))) {
+    showBanner('offer-error', '⚠ Invalid time. Use HH:MM format (e.g. 09:30).');
+    return;
+  }
+
+  const offer = { name, phone, city, time, seats, note, dir: offerDir, created_at: new Date().toISOString() };
+
+  const btn = document.getElementById('offer-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Saving…';
+
+  let ok = false;
+  if(db) {
+    const { error } = await db.from('offers').insert([offer]);
+    ok = !error;
+    if(error) showBanner('offer-error', '⚠ Error: ' + error.message);
+  } else {
+    const all = localLoad();
+    all.push({ ...offer, id: Date.now() });
+    localSave(all);
+    ok = true;
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Add my ride offer';
+
+  if(ok) {
+    hideBanner('offer-error');
+    showBanner('offer-success', '✓ All set! You're on the list. Compatible travellers will be able to contact you.');
+    ['o-name','o-phone','o-time','o-note'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('o-city').value = '';
+    document.getElementById('o-seats').value = 2;
+    setTimeout(() => hideBanner('offer-success'), 5000);
+  }
+}
+
+// ─── SEARCH ────────────────────────────────────────────────
+async function searchRides() {
+  let fcity = document.getElementById('f-city').value;
+  if(fcity === 'other') fcity = document.getElementById('f-other').value.trim();
+  const win = document.getElementById('f-window').value;
+  const [wStart, wEnd] = win.split('-').map(Number);
+
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Searching…';
+
+  let all = [];
+  if(db) {
+    const { data, error } = await db.from('offers').select('*').eq('dir', findDir);
+    if(error) { showBanner('find-error', '⚠ Search error: ' + error.message); btn.disabled=false; btn.textContent='Search rides'; return; }
+    all = data || [];
+  } else {
+    all = localLoad().filter(o => o.dir === findDir);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Search rides';
+
+  const matched = all.filter(o => {
+    const cityOk = citiesMatch(fcity, o.city);
+    const h = parseHour(o.time);
+    const timeOk = wStart === 6 && wEnd === 18 ? true : (h >= wStart && h <= wEnd);
+    return cityOk && timeOk;
+  });
+
+  hideBanner('find-error');
+  document.getElementById('results-area').classList.remove('hidden');
+  document.getElementById('results-count').textContent = matched.length + (matched.length === 1 ? ' found' : ' found');
+  const list = document.getElementById('results-list');
+
+  if(!matched.length) {
+    list.innerHTML = `<div class="empty">
+      <p class="empty-title">No rides found</p>
+      <p class="empty-sub">No rides match your criteria yet.<br>Check back later or post in the wedding group chat!</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = matched.map(o => renderCard(o, true)).join('');
+}
+
+// ─── LOAD ALL ──────────────────────────────────────────────
+async function loadAll() {
+  const list = document.getElementById('all-list');
+  list.innerHTML = '<div class="empty"><p class="empty-sub">Loading…</p></div>';
+
+  let all = [];
+  if(db) {
+    const { data, error } = await db.from('offers').select('*').order('created_at', { ascending: true });
+    if(error) { list.innerHTML = '<div class="empty"><p class="empty-title">Loading error</p></div>'; return; }
+    all = data || [];
+  } else {
+    all = localLoad();
+  }
+
+  document.getElementById('all-count').textContent = all.length + (all.length === 1 ? ' ride' : ' rides');
+
+  if(!all.length) {
+    list.innerHTML = '<div class="empty"><p class="empty-title">No rides yet</p><p class="empty-sub">Be the first to add yours!</p></div>';
+    return;
+  }
+
+  const go = all.filter(o => o.dir === 'go');
+  const ret = all.filter(o => o.dir === 'return');
+  let html = '';
+  if(go.length) {
+    html += '<div class="group-label">→ Going — Saturday</div>';
+    html += go.map(o => renderCard(o, false)).join('');
+  }
+  if(ret.length) {
+    html += '<div class="group-label">← Return — Sunday</div>';
+    html += ret.map(o => renderCard(o, false)).join('');
+  }
+  list.innerHTML = html;
+}
+
+// ─── RENDER CARD ───────────────────────────────────────────
+function renderCard(o, showContact) {
+  const dirBadge = o.dir === 'go'
+    ? '<span class="badge badge-go">→ Going</span>'
+    : '<span class="badge badge-return">← Return</span>';
+
+  const contactSection = showContact
+    ? `<div class="contact-row">
+        <button class="reveal-btn" onclick="revealContact(this,'${esc(o.phone)}')">Show contact</button>
+        <span class="phone-display" style="display:none"></span>
+      </div>`
+    : `<div class="contact-row">
+        <span style="font-size:0.8rem;color:var(--ink-muted)">Search under "Find a ride" to see the contact</span>
+      </div>`;
+
+  return `<div class="match-card">
+    <div class="match-top">
+      <span class="match-name">${esc(o.name)}</span>
+      ${dirBadge}
+    </div>
+    <div class="match-detail">
+      <strong>${esc(o.city)}</strong> · at <strong>${esc(o.time)}</strong>
+    </div>
+    ${o.note ? `<p class="match-note">"${esc(o.note)}"</p>` : ''}
+    <span class="seats-tag">🪑 ${o.seats} posto${o.seats>1?'i':''} disponibil${o.seats>1?'i':'e'}</span>
+    ${contactSection}
+  </div>`;
+}
+
+function revealContact(btn, phone) {
+  const display = btn.nextElementSibling;
+  btn.style.display = 'none';
+  display.style.display = '';
+  display.textContent = '📞 ' + phone;
+
+  // WhatsApp link
+  const clean = phone.replace(/\s+/g,'').replace(/^00/,'+');
+  if(clean.startsWith('+')) {
+    const wa = document.createElement('a');
+    wa.href = 'https://wa.me/' + clean.replace('+','');
+    wa.target = '_blank';
+    wa.className = 'whatsapp-btn';
+    wa.innerHTML = '💬 WhatsApp';
+    display.parentElement.appendChild(wa);
+  }
+}
+
+// ─── UTILS ─────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function showBanner(id, msg) {
+  const el = document.getElementById(id);
+  if(el) { el.textContent = msg; el.classList.add('show'); }
+}
+function hideBanner(id) {
+  const el = document.getElementById(id);
+  if(el) el.classList.remove('show');
+}
+
+// ─── START ─────────────────────────────────────────────────
+initDB();
+</script>
+</body>
+</html>
