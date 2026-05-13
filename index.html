@@ -6,7 +6,7 @@
 <title>Este & Edo — Carpool 🚗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
  
@@ -659,18 +659,17 @@ let activeTab = 'offer';
 // ─── INIT ──────────────────────────────────────────────────
 function initDB() {
   try {
-    if (typeof supabase === 'undefined') {
+    if (typeof window.supabase === 'undefined') {
       setStatus('⚠ Offline mode — data saved on this device only', 'err');
       setTimeout(() => document.getElementById('db-status').style.display = 'none', 3000);
       return;
     }
-    const { createClient } = supabase;
-    db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     setStatus('✓ Connected', 'ok');
     setTimeout(() => document.getElementById('db-status').style.display = 'none', 2000);
   } catch(e) {
-    setStatus('⚠ Offline mode', 'err');
-    setTimeout(() => document.getElementById('db-status').style.display = 'none', 3000);
+    setStatus('⚠ Error: ' + e.message, 'err');
+    setTimeout(() => document.getElementById('db-status').style.display = 'none', 5000);
   }
 }
  
@@ -933,7 +932,13 @@ function hideBanner(id) {
 }
  
 // ─── START ─────────────────────────────────────────────────
-window.addEventListener('load', initDB);
+// Init DB but never block UI
+setTimeout(initDB, 100);
+// Always hide status after 4s regardless
+setTimeout(() => { 
+  const el = document.getElementById('db-status'); 
+  if(el) el.style.display = 'none'; 
+}, 4000);
 </script>
 </body>
 </html>
