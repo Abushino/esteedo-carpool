@@ -645,13 +645,7 @@ textarea { resize: vertical; min-height: 72px; }
 </main>
  
 <script>
-// ─── CONFIG ────────────────────────────────────────────────
-// Replace these with your actual Supabase project values after setup
-const SUPABASE_URL = 'https://zdgwscdqxdzljmgkxyrb.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_j1vMgw8H67_7vVJO-Oa9Uw_iP8ZQgpA';
- 
 // ─── STATE ─────────────────────────────────────────────────
-let db = null;
 let offerDir = 'go';
 let findDir = 'go';
 let activeTab = 'offer';
@@ -752,31 +746,21 @@ async function submitOffer() {
  
   const btn = document.getElementById('offer-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Saving…';
+  btn.textContent = 'Saving…';
  
-  let ok = false;
-  if(db) {
-    const { error } = await db.from('offers').insert([offer]);
-    ok = !error;
-    if(error) showBanner('offer-error', '⚠ Error: ' + error.message);
-  } else {
-    const all = localLoad();
-    all.push({ ...offer, id: Date.now() });
-    localSave(all);
-    ok = true;
-  }
+  const all = localLoad();
+  all.push({ ...offer, id: Date.now() });
+  localSave(all);
  
   btn.disabled = false;
   btn.textContent = 'Add my ride offer';
  
-  if(ok) {
-    hideBanner('offer-error');
-    showBanner('offer-success', '✓ All set! You're on the list. Compatible travellers will be able to contact you.');
-    ['o-name','o-phone','o-time','o-note'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('o-city').value = '';
-    document.getElementById('o-seats').value = 2;
-    setTimeout(() => hideBanner('offer-success'), 5000);
-  }
+  hideBanner('offer-error');
+  showBanner('offer-success', '✓ All set! You are on the list. Compatible travellers will be able to contact you.');
+  ['o-name','o-phone','o-time','o-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('o-city').value = '';
+  document.getElementById('o-seats').value = 2;
+  setTimeout(() => hideBanner('offer-success'), 5000);
 }
  
 // ─── SEARCH ────────────────────────────────────────────────
@@ -788,16 +772,9 @@ async function searchRides() {
  
   const btn = document.getElementById('search-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Searching…';
+  btn.textContent = 'Searching…';
  
-  let all = [];
-  if(db) {
-    const { data, error } = await db.from('offers').select('*').eq('dir', findDir);
-    if(error) { showBanner('find-error', '⚠ Search error: ' + error.message); btn.disabled=false; btn.textContent='Search rides'; return; }
-    all = data || [];
-  } else {
-    all = localLoad().filter(o => o.dir === findDir);
-  }
+  const all = localLoad().filter(o => o.dir === findDir);
  
   btn.disabled = false;
   btn.textContent = 'Search rides';
@@ -811,7 +788,7 @@ async function searchRides() {
  
   hideBanner('find-error');
   document.getElementById('results-area').classList.remove('hidden');
-  document.getElementById('results-count').textContent = matched.length + (matched.length === 1 ? ' found' : ' found');
+  document.getElementById('results-count').textContent = matched.length + ' found';
   const list = document.getElementById('results-list');
  
   if(!matched.length) {
@@ -830,16 +807,9 @@ async function loadAll() {
   const list = document.getElementById('all-list');
   list.innerHTML = '<div class="empty"><p class="empty-sub">Loading…</p></div>';
  
-  let all = [];
-  if(db) {
-    const { data, error } = await db.from('offers').select('*').order('created_at', { ascending: true });
-    if(error) { list.innerHTML = '<div class="empty"><p class="empty-title">Loading error</p></div>'; return; }
-    all = data || [];
-  } else {
-    all = localLoad();
-  }
+  const all = localLoad();
  
-  document.getElementById('all-count').textContent = all.length + (all.length === 1 ? ' ride' : ' rides');
+  document.getElementById('all-count').textContent = all.length + ' ride' + (all.length !== 1 ? 's' : '');
  
   if(!all.length) {
     list.innerHTML = '<div class="empty"><p class="empty-title">No rides yet</p><p class="empty-sub">Be the first to add yours!</p></div>';
